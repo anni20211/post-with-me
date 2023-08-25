@@ -1,20 +1,13 @@
 import './App.css';
 import React ,{ useState,useEffect} from 'react';
-// import { collection, onSnapshot } from "firebase/firestore";
 import Post from "./Post";
 import {db,auth} from './firebase';
-// import { makeStyles } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from "@material-ui/core/Modal";
 import  Button  from '@material-ui/core/Button';
 import { Input } from '@material-ui/core';
 import ImageUpload from './ImageUpload';
-import InstagramEmbed from 'react-instagram-embed';
-
-// import ReactInstaStories from 'react-insta-stories';
-// import  InstaStories from './InstaStories';
-
-
+import InstaStory from './InstaStory';
 
 function getModalStyle() {
   const top = 50;
@@ -49,25 +42,18 @@ function App() {
   useEffect(()=>{
   const unsubscribe=auth.onAuthStateChanged((authUser)=>{
     if(authUser){ 
-      //for log in
-      console.log(authUser);
       setUser(authUser);
     }
     else{
-    // for logout
     setUser(null);
     }
   })
   return ()=>{
-//perform some cleanup action
    unsubscribe();
   }
   },[user,username]);
-  // useEffect -> runs on a specific condition and [] input field is blank then it runs only ones .
-  // if [post] then it will be run after every post
   useEffect(() => {
     db.collection("posts").orderBy('timestamp','desc').onSnapshot(snapshot=>{
-      //for every post it gets fire like snap camera pic
       setPosts(snapshot.docs.map(doc=>({
         id:doc.id,
        post: doc.data()}))
@@ -138,7 +124,7 @@ function App() {
   open={openSignIn}
   onClose={()=>setOpenSignIn(false)}>
    <div  style={modelStyle} className={classes.paper} >
-   <form className="sign_up">
+   <form className="sign_in">
    <center>
    <img
    className='header_image'
@@ -151,12 +137,14 @@ function App() {
       placeholder="email"
       value={email}
       onChange={(e)=>setEmail(e.target.value)}
+      className='input'
      />
      <Input
       type="password"
       placeholder="password"
       value={password}
       onChange={(e)=>setPassword(e.target.value)}
+      className='input'
      />
      <Button  type="submit" onClick={signIn}  > sign In</Button>
    </form>
@@ -178,7 +166,6 @@ function App() {
       </div>
     )}
     </div>
-    
     <div className='posts' >
     <div className='left_part' >
     {
@@ -188,38 +175,18 @@ function App() {
       }
     </div>
     <div className='right_part'  >
-    {/* create the story component */}
-<InstagramEmbed
-  url='https://instagr.am/p/Zw9o4/'
-  clientAccessToken='123|456'
-  maxWidth={320}
-  hideCaption={false}
-  containerTagName='div'
-  protocol=''
-  injectScript
-  onLoading={() => {}}
-  onSuccess={() => {}}
-  onAfterRender={() => {}}
-  onFailure={() => {}}
-/>   
-  
-
-{/* <InstaStories/> */}
-{/* <ReactInstaStories
-      stories={stories}
-      defaultInterval={1500}
-      width={432}
-      height={768}
-    /> */}
+    {user&&<InstaStory/>}
+   <h1 >Welcome buddy!</h1>
     </div>
     
     </div>
       {user?.displayName ? (
       <ImageUpload username={user.displayName}/> 
     ):(
-     <h3>Sorry ,login first to upload</h3> 
+       <h3 style={{textAlign:"center",marginBottom:"10px" ,bottom:"10px"}}>Sorry! go to Sign In  first for up</h3>
+
+      
     )}
-      {/* posts */} 
     </div>
   );
 }

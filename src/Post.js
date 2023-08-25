@@ -1,11 +1,14 @@
 import React,{useState,useEffect} from 'react';
 import "./Post.css"
 import Avatar from '@material-ui/core/Avatar';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import firebase from 'firebase/compat/app';
 import {db} from "./firebase";
+
 function Post({username,postId,caption,user,imageurl}) {
   const [comments,setComments]=useState([]);
   const [comment,setComment]=useState('');
+  const [increment,setIncrement]=useState(0);
   useEffect(() => {
     let unsubscribe;
     if(postId){
@@ -18,18 +21,20 @@ function Post({username,postId,caption,user,imageurl}) {
       unsubscribe(); 
     }
   }, [postId]);
-
+  const handleClick=(e)=>{
+    e.preventDefault();
+    setIncrement(increment+1);
+  }
   const PostComment=(e)=>{
        e.preventDefault();
        db.collection("posts").doc(postId).collection("comments").add({
        text:comment,
-       username:user.displayName,//signed user only
-       timestamp:firebase.firestore.FieldValue.serverTimestamp()
-             
+       username:user.displayName,
+       timestamp:firebase.firestore.FieldValue.serverTimestamp()      
       })
       setComments('');
 
-  }
+  } 
 
   return (
     <div className='post'  > 
@@ -37,14 +42,8 @@ function Post({username,postId,caption,user,imageurl}) {
     <Avatar  className='post_avatar' alt="Ankit kumar" src="/static/images/avatar/1.jpg" />
     <h2>{username}</h2>
     </div>
-  
-      {/* header-avatar-username-un */}
-
     <img className='post_image' src={imageurl}  alt="it's a server error" />
-      {/* image */}
-
     <h4  className='post_handle' ><strong>{username}</strong> {caption}</h4>
-      {/* username+caption */}
       <div className='Input_comments'  >
       {comments.map(comment=>(
         <p>
@@ -53,10 +52,23 @@ function Post({username,postId,caption,user,imageurl}) {
       )
 
       )}
+      <div className='Like_share'>
+      <div>
+      <FavoriteBorderIcon onClick={handleClick}/>
+      <div className='like_para'>
+      <p>{username} and {increment>0?increment-1:increment} liked this post</p>
+      </div>
+      </div>
+      <div>
+      </div>
+      <div>
+      </div>
+      
+    </div>
      
       </div>
       
-    {user && (         //if user logged in then he cna post a comment otherwise not
+    {user && (  
       <form className='post_form' >
     <input className='post_comment'
      type="text"

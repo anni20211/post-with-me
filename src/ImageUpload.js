@@ -8,8 +8,6 @@ function ImageUpload({username}) {
     const [image,setImage]=useState(null);
     const [caption,setCaption]=useState('');
     const [progress,setProgress]=useState(0);
-    
-
    const  handleChange = e => {
         if (e.target.files[0]) {
            setImage(e.target.files[0]);
@@ -21,25 +19,21 @@ function ImageUpload({username}) {
      UploadTask.on(
         "state_changed",
      (snapshot)=>{
-            //progress function
             const progress=Math.round(
                 (snapshot.bytesTransferred/snapshot.totalBytes) * 100
             );
             setProgress(progress);
         },
         (error)=>{
-            //error function  for showing all is going good or not
             console.log(error);
             alert(error.message);
         },
         ()=>{
-            //complete the function 
             storage
             .ref("images")
             .child(image.name)
-            .getDownloadURL()// give the download url
+            .getDownloadURL()
             .then(url=>{
-              // post image inside db
               db.collection("posts").add({
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 caption:caption,

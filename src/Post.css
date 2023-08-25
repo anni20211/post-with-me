@@ -4,6 +4,10 @@
     border: 1px solid lightgray;
     margin-bottom: 50px;
 }
+.posts{
+    display: flex;
+    gap: 10px;
+}
 .post_image{
     width: 100%;
     
@@ -41,4 +45,14 @@
   background-color: transparent;
   border-top: 1px solid lightgrey;
 
+}
+.Like_share{
+    display: flex;
+     justify-content: space-between;
+    margin-top: 15px;
+    
+}
+.like_para p{
+    color: rgb(21, 129, 94);
+     
 }
